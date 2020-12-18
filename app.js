@@ -1,19 +1,18 @@
-const express = require("express");
 require('dotenv').config()
+const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
 const jwt = require("jsonwebtoken");
 // IMPORTING THE USERS MODEL
-const User = require('./models/User')
+const User = require('./models/User');
 
+app.use(express.json())
 app.use(cors());
 app.options('*', cors())
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(logger("dev"));
-// app.use(cookieParser());
 
 let protectedRoute = (req, res, next) => {
     if (!req.headers.authorization)
@@ -22,7 +21,7 @@ let protectedRoute = (req, res, next) => {
 
     if (!token) return res.status(403).send("Unauthenticated");
     try {
-        var decoded = jwt.verify(token, "shhhhh");
+        var decoded = jwt.verify(token, "12345");
     } catch (err) {
         return res.status(403).send("Unauthenticated");
     }
@@ -48,7 +47,7 @@ mongoose
 
 
 
-app.get("/users", (req, res) => {
+app.get("/users", protectedRoute, (req, res) => {
     User.find()
         .then((users) => {
             res.json(users)
@@ -56,7 +55,7 @@ app.get("/users", (req, res) => {
         .catch(err => console.log(err))
 });
 
-app.get("/users/:userId", (req, res) => {
+app.get("/users/:userId", protectedRoute, (req, res) => {
     User.findById(req.params.userId)
         .then((user) => {
             res.json(user)

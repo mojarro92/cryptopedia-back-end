@@ -29,7 +29,7 @@ app.post("/login", (req, res) => {
             bcrypt.compare(req.body.password, user.password, function (err, match) {
                 if (err) res.status(500).send("Wrong Password.")
                 if (match) {
-                    var token = jwt.sign({ id: user._id }, "Logging...")
+                    var token = jwt.sign({ id: user._id }, "12345")
                     res.json({ token: token })
                 } else res.status(403).send("Invalid credentials")
             })
